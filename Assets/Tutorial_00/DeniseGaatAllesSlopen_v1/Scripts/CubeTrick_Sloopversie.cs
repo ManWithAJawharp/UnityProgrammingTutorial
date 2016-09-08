@@ -23,12 +23,12 @@ public class CubeTrick_Sloopversie : MonoBehaviour
     private Color[] colorArray = { Color.red, Color.green, Color.blue };
 
     private Renderer renderer;
-
-    public GameObject Sphere;
+    private TrailRenderer trailrenderer;
 
     void Awake()
     {
         renderer = GetComponent<Renderer>();
+        trailrenderer = GetComponent<TrailRenderer>();
     }
 
     float calculateTransformedSine(float value, float a, float b, float c, float d)
@@ -52,6 +52,12 @@ public class CubeTrick_Sloopversie : MonoBehaviour
         transform.Rotate(new Vector3(Mathf.Sin(Time.time * speedX), Mathf.Sin(Time.time * speedY), Mathf.Sin(Time.time * speedZ)));
         // Translate scale, but keeps value between 0.3 and 3
         transform.localScale = Vector3.one * calculateTransformedSine(Time.time * speedX, sinusA, sinusB, sinusC, sinusD);
+
+
+        // change color of trail over time with sinoid
+        trailrenderer.material.color = new Color(calculateTransformedSine(Time.time * speedX, 0.5f, 1, 0, 0.5f),
+            calculateTransformedSine(Time.time * speedY, 0.5f, 1, 0, 0.5f),
+            calculateTransformedSine(Time.time * speedZ, 0.5f, 1, 0, 0.5f));
 
 
         if (Input.GetKeyDown(KeyCode.Q))
