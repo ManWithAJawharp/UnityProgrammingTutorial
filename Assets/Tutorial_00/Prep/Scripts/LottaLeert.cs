@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CubeTrick : MonoBehaviour
+public class LottaLeert : MonoBehaviour
 {
     [SerializeField]
 
