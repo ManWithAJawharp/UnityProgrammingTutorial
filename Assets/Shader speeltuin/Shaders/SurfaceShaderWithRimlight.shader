@@ -42,7 +42,7 @@
 			o.Alpha = c.a;
 
 			half fresnell = 1.0 - saturate(dot(normalize(IN.viewDir), o.Normal));
-			o.Emission = (_FresnellColor.rgb * pow(fresnell, _FresnellPower)) * _FresnellColor.a;
+			o.Emission = (_FresnellColor.rgb * pow(fresnell, _FresnellPower)) * (_FresnellColor.a * (.3* sin(_Time.w) + .7));
 		}
 		ENDCG
 	}
