@@ -1,4 +1,4 @@
-﻿Shader "Unlit/BasicShaderUnlit"
+﻿Shader "ShaderSpeeltuin/BasicShaderUnlit"
 {
 	Properties
 	{
