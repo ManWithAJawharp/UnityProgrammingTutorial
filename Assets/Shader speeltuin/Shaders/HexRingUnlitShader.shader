@@ -8,6 +8,7 @@ Shader "ShaderSpeeltuin/HexRingUnlitShader"
 		_HexTex("Hexes (B/W)", 2D) = "black" {}
 		_Color("Color", Color) = (1,1,1,1)
 		_RingColor("Ring color", Color) = (1,1,1,1)
+		_Falloff("Falloff", Float) = 1
 	}
 	SubShader
 	{
@@ -65,6 +66,7 @@ Shader "ShaderSpeeltuin/HexRingUnlitShader"
 			
 			fixed4 _RingColor;
 			fixed4 _Color;
+			float _Falloff;
 
 			fixed4 hexWaves(fixed4 hex, half dist)
 			{
@@ -87,7 +89,7 @@ Shader "ShaderSpeeltuin/HexRingUnlitShader"
 				hex = hexWaves(hex, dist);
 				
 				
-				hex *= _RingColor * _RingColor.a;
+				hex *= _RingColor * _RingColor.a * _Falloff / dist;
 				col -= hex;
 				col = max(0, col) + hex;
 
