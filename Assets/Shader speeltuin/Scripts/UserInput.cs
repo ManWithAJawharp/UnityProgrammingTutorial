@@ -8,6 +8,9 @@ public class UserInput : MonoBehaviour
     private KeyCode sceneryKey;
     [SerializeField]
     private KeyCode turntableKey;
+    [SerializeField]
+    private KeyCode spawnKey;
+
 
     [SerializeField]
     private GameObject lightGroup;
@@ -15,10 +18,18 @@ public class UserInput : MonoBehaviour
     private GameObject sceneryGroup;
     [SerializeField]
     private Animation turntableAnimation;
+    [SerializeField]
+    private GameObject spawnable;
 
 	void Update ()
     {
-	    if(Input.GetKeyUp(lightKey))
+        if (Input.GetKeyUp(spawnKey))
+        {
+            GameObject pot = Instantiate(spawnable, Vector3.up*5, Quaternion.identity) as GameObject;
+            pot.GetComponent<Rigidbody>().AddForceAtPosition(Random.insideUnitSphere, pot.transform.position);
+            pot.GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * Random.Range(1, 100);
+        }
+        if (Input.GetKeyUp(lightKey))
         {
             lightGroup.SetActive(!lightGroup.activeInHierarchy);
         }
