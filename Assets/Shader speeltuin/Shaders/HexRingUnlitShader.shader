@@ -21,6 +21,7 @@ Shader "ShaderSpeeltuin/HexRingUnlitShader"
 			#pragma vertex vert
 			#pragma fragment frag
 
+			#define PI 3.14159265359
 			
 			#include "UnityCG.cginc"
 
@@ -28,13 +29,16 @@ Shader "ShaderSpeeltuin/HexRingUnlitShader"
 			{
 				float4 vertex : POSITION;
 				float2 uv : TEXCOORD0;
+				float3 normal : NORMAL;
 			};
 
 			struct v2f
 			{
 				float2 uv : TEXCOORD0;
-				float2 uv2 : TEXCOORD1;
-				float3 worldPos : TEXCOORD2;
+				float2 projectedUVTop : TEXCOORD1;
+				float2 projectedUVLeft : TEXCOORD2;
+				float2 projectedUVFront : TEXCOORD3;
+				float3 worldPos : TEXCOORD4;
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
 			};
@@ -48,9 +52,13 @@ Shader "ShaderSpeeltuin/HexRingUnlitShader"
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				o.uv2 = TRANSFORM_TEX(v.uv, _HexTex);
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				o.normal = v.normal;
+
+				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.projectedUVTop = TRANSFORM_TEX(o.worldPos.xz, _HexTex);
+				o.projectedUVLeft = TRANSFORM_TEX(o.worldPos.zy, _HexTex);
+				o.projectedUVFront = TRANSFORM_TEX(o.worldPos.xy, _HexTex);
 
 				return o;
 			}
@@ -58,16 +66,35 @@ Shader "ShaderSpeeltuin/HexRingUnlitShader"
 			fixed4 _RingColor;
 			fixed4 _Color;
 
+			fixed4 hexWaves(fixed4 hex, half dist)
+			{
+				hex.r *= 0.5 * (1 + sin(dist - _Time.w * .6666666 * PI));
+				hex.g *= 0.5 * (1 + sin(dist - _Time.x * .6666666 * PI + .666666 * PI));
+				hex.b *= 0.5 * (1 + sin(dist - _Time.y * .6666666 * PI + 1.333333 * PI));
+				hex.a = 0.12; // heel belangrijk (!)
+				return hex;
+			}
+
 			fixed4 frag (v2f i) : SV_Target
 			{
 				half dist = length(i.worldPos);
 				fixed4 col = (tex2D(_MainTex, i.uv) * _Color) * _Color.a;
-				fixed4 hex = ((tex2D(_HexTex, i.uv2) * _RingColor) * 0.5*(1 + sin(_Time.w + dist))) * _RingColor.a;
-				// col = fixed4(i.worldPos.x, i.worldPos.y, i.worldPos.z, 0);
 				
+				fixed4 hex = tex2D(_HexTex, i.projectedUVTop) * abs(dot(half3(0, 1, 0), i.normal));
+				hex += tex2D(_HexTex, i.projectedUVLeft) * abs(dot(half3(1, 0, 0), i.normal));
+				hex += tex2D(_HexTex, i.projectedUVFront) * abs(dot(half3(0, 0, 1), i.normal));
+				
+				hex = hexWaves(hex, dist);
+				
+				
+				hex *= _RingColor * _RingColor.a;
 				col -= hex;
 				col = max(0, col) + hex;
+
+
+
 				return col;
+
 			}
 			ENDCG
 		}
