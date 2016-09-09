@@ -1,4 +1,4 @@
-﻿Shader "ShaderSpeeltuin/DistortionImageEffectShader"
+﻿Shader "Hidden/DistortionImageEffectShader"
 {
 	Properties
 	{
