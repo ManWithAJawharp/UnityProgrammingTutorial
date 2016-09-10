@@ -7,6 +7,7 @@ Shader "ShaderSpeeltuin/HexRingUnlitShader"
 		_MainTex("Albedo (RGB)", 2D) = "white" {}
 		_HexTex("Hexes (B/W)", 2D) = "black" {}
 		_Color("Color", Color) = (1,1,1,1)
+		_RingSize("Ring size", Range(1,5)) = 2
 		_RingColor("Ring color", Color) = (1,1,1,1)
 		_Falloff("Falloff", Float) = 1
 	}
@@ -66,14 +67,15 @@ Shader "ShaderSpeeltuin/HexRingUnlitShader"
 			
 			fixed4 _RingColor;
 			fixed4 _Color;
-			float _Falloff;
+			half _Falloff;
+			half _RingSize;
 
 			fixed4 hexWaves(fixed4 hex, half dist)
 			{
-				hex.r *= 0.5 * (1 + sin(dist - _Time.w * .6666666 * PI));
-				hex.g *= 0.5 * (1 + sin(dist - _Time.x * .6666666 * PI + .666666 * PI));
-				hex.b *= 0.5 * (1 + sin(dist - _Time.y * .6666666 * PI + 1.333333 * PI));
-				hex.a = 0.12; // heel belangrijk (!)
+				hex.r *= sin((dist - _Time.w * .6666666 * PI) / _RingSize);
+				hex.g *= sin((dist - _Time.w * .6666666 * PI + .666666 * PI) / _RingSize);
+				hex.b *= sin((dist - _Time.w * .6666666 * PI + 1.333333 * PI) / _RingSize);
+				hex.a = 0; // heel belangrijk (!)
 				return hex;
 			}
 
@@ -87,12 +89,10 @@ Shader "ShaderSpeeltuin/HexRingUnlitShader"
 				hex += tex2D(_HexTex, i.projectedUVFront) * abs(dot(half3(0, 0, 1), i.normal));
 				
 				hex = hexWaves(hex, dist);
-				
-				
+				//hex.gb = half2(0, 0);
 				hex *= _RingColor * _RingColor.a * _Falloff / dist;
-				col -= hex;
-				col = max(0, col) + hex;
-
+				col += hex;
+				//col = max(0, col) + hex;
 
 
 				return col;
