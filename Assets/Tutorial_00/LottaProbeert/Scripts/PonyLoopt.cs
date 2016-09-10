@@ -1,27 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PonyLoopt : MonoBehaviour {
 
-    public float speedForward;
+    public int speedForward;
     public int heightJump;
     public int speedJump;
+    private bool collisionPony;
+    private Rigidbody rigidbodyPony;
+    private Vector3 beginPositiePony;
+    private Quaternion beginRotatiePony;
     
 	// Use this for initialization
 	void Start () {
-	
+        rigidbodyPony = GetComponent<Rigidbody>();
+        beginPositiePony = transform.position;
+        beginRotatiePony = transform.rotation;
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    void Update () {
         transform.Translate(0f, 0f, speedForward * Time.deltaTime);
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space) && collisionPony == true)
         {
-            if (transform.position.y <= heightJump)
-            {
-                transform.Translate(0f, speedJump * Time.deltaTime, 0f);
-            }
+            rigidbodyPony.AddForce(Vector3.up * speedJump, ForceMode.Impulse);
         }
     }
     
@@ -32,22 +36,30 @@ public class PonyLoopt : MonoBehaviour {
             + 2 * Mathf.Pow(2 * t - 1, 2) * Vector3.forward;    //  Add parabolic movement along z-axis
     }
     
+    //Of ie mag springen ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    void OnCollisionEnter(Collision col)
+    {
+        collisionPony = true;
+    }
 
-    //while hoogte < heightJump translate y met speedJump
+    void OnCollisionExit(Collision col)
+    {
+        collisionPony = false;
+    }
+    //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    /*  if (someObject.transform.position.x == someX)
+    //of ie doodgaat------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    void OnTriggerEnter(Collider col)
+    {
+        if (col.tag == "Respawn")
         {
-             do something
+            transform.position = beginPositiePony;
+            transform.rotation = beginRotatiePony;
         }
-     *    
-     *    
-     *    
-     *    
-     *    float NaarVoren (float speedForward)
+        else if (col.tag == "Finish")
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                transform.Translate(0f,1f*Time.deltaTime, 0f);
-            }
-        }*/
+            //andere scene laden
+            SceneManager.LoadScene("StartScenePonie");
+        }
+    }
 }
