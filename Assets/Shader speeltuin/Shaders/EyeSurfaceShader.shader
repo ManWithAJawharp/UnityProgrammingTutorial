@@ -2,7 +2,7 @@
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_PupilColor("Pupil color", Color) = (1,1,1,1)
-		_PupilSize("Pupil Size", Range(0.42,.5)) = 0.5
+		_PupilSize("Pupil Size", Range(0.42,.495)) = 0.5
 		_MainTex ("Eye texture", 2D) = "white" {}
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
@@ -37,7 +37,7 @@
 		half _PupilSize;
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
-			_PupilSize = (.035 *sin(_Time.w/2)) +.46;
+			//_PupilSize = (.035 *sin(_Time.w/2)) +.46;
 			half pupilPole = clamp((IN.objPos.x- _PupilSize)*50, 0, 1);
 			fixed3 tex = tex2D(_MainTex, IN.uv_MainTex);
 			fixed4 c = _Color;
