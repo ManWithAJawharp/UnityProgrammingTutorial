@@ -23,7 +23,7 @@ public class SwerlyLerp : MonoBehaviour
 
     protected Vector3 Lerp(Vector3 a, Vector3 b, float t)
     {
-        return (1f - t) * start + t * end   //  Standard Lerp
+        return (1f - t) * a + t * b   //  Standard Lerp
             + Mathf.Sin(2 * Mathf.PI * t) * Vector3.up //  Add wave movement along y-axis
             + 2 * Mathf.Pow(2 * t - 1, 2) * Vector3.forward;    //  Add parabolic movement along z-axis
     }
