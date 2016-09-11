@@ -11,7 +11,7 @@ public class LutImageEffect : MonoBehaviour
     void Start()
     {
         effectMaterial = new Material(Shader.Find("Hidden/LutImageEffectShader"));
-        effectMaterial.SetTexture("_MainTex", lutTexture);
+        effectMaterial.SetTexture("_LutTex", lutTexture);
     }
 
     public void OnRenderImage(RenderTexture source, RenderTexture destination)
