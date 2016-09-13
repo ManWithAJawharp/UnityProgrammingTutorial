@@ -3,7 +3,7 @@
 	Properties
 	{
 		_MainTex("Texture", 2D) = "white" {}
-		_LutTex ("Lut Texture", 2D) = "white" {}
+		_LutTex ("Lut Texture", 3D) = "white" {}
 	}
 	SubShader
 	{
