@@ -4,6 +4,7 @@
 	{
 		_MainTex("Texture", 2D) = "white" {}
 		_LutTex ("Lut Texture", 3D) = "" {}
+		_LutDebug ("Debug vector 3", Color) = (0,0,0,0)
 	}
 	SubShader
 	{
@@ -40,13 +41,19 @@
 			
 			sampler2D _MainTex;
 			sampler3D _LutTex;
+			float4 _LutDebug;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 img = tex2D(_MainTex, i.uv);
-				fixed4 col = tex3D(_LutTex, img.rgb);
-				//fixed4 col = tex3D(_LutTex, img.rgb);
+				fixed4 cor = tex2D(_MainTex, i.uv + half2(0.5,0));
+				fixed4 img = tex2D(_MainTex, i.uv - half2(0.5,0));
+				//fixed4 col = tex3D(_LutTex, _LutDebug);//- float3(.2,.2,.2));
+
+				fixed4 col = tex3D(_LutTex, img);
+				//col.rgb = img.rgb;
 				col.a = 0;
+				//col.rgb -= cor.rgb;
+				col.rgb += cor.rgb;
 				return col;
 			}
 			ENDCG
