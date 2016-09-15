@@ -3,7 +3,7 @@
 	Properties
 	{
 		_MainTex("Texture", 2D) = "white" {}
-		_LutTex ("Lut Texture", 3D) = "white" {}
+		_LutTex ("Lut Texture", 3D) = "" {}
 	}
 	SubShader
 	{
@@ -39,12 +39,14 @@
 			}
 			
 			sampler2D _MainTex;
+			sampler3D _LutTex;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_MainTex, i.uv);
-				// just invert the colors
-				col = 1 - col;
+				fixed4 img = tex2D(_MainTex, i.uv);
+				fixed4 col = tex3D(_LutTex, img.rgb);
+				//fixed4 col = tex3D(_LutTex, img.rgb);
+				col.a = 0;
 				return col;
 			}
 			ENDCG
