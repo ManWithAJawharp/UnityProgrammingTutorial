@@ -39,21 +39,29 @@
 				return o;
 			}
 			
+			float3 relativeCords(float3 normCords) 
+			{
+				/*float3 relCords;
+				relCords.x = 0.2 + (0.7 * normCords.x);*/
+				return 0.0325 + (0.9475 * normCords);
+			}
+
 			sampler2D _MainTex;
 			sampler3D _LutTex;
 			float4 _LutDebug;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 cor = tex2D(_MainTex, i.uv + half2(0.5,0));
-				fixed4 img = tex2D(_MainTex, i.uv - half2(0.5,0));
-				//fixed4 col = tex3D(_LutTex, _LutDebug);//- float3(.2,.2,.2));
+				//fixed4 cor = tex2D(_MainTex, i.uv + half2(0.5,0));
+				fixed4 img = tex2D(_MainTex, i.uv);
+				fixed4 col = tex3D(_LutTex, relativeCords(_LutDebug));//- float3(.2,.2,.2));
+				//fixed4 col = tex3D(_LutTex, (_LutDebug));//- float3(.2,.2,.2));
 
-				fixed4 col = tex3D(_LutTex, img);
+				//fixed4 col = tex3D(_LutTex, img);
 				//col.rgb = img.rgb;
 				col.a = 0;
 				//col.rgb -= cor.rgb;
-				col.rgb += cor.rgb;
+				//col.rgb += cor.rgb;
 				return col;
 			}
 			ENDCG
