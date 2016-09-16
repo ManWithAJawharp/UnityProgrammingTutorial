@@ -45,7 +45,6 @@ public class LutImageEffect : MonoBehaviour
             lut3D = make3DLutTexture(lutTexture, 16);
             effectMaterial.SetTexture("_LutTex", lut3D);
         }
-            
         Graphics.Blit(source, destination, effectMaterial);
     }
 }
