@@ -2,7 +2,7 @@
 using System.Collections;
 
 [ExecuteInEditMode]
-public class ImageEffect : MonoBehaviour
+public class DistortionImageEffect : MonoBehaviour
 {
     [SerializeField, Range(0f, 0.3f)]
     private float distortionPower = 0;
