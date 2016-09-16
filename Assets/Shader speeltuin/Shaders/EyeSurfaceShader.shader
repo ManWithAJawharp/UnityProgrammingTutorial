@@ -49,6 +49,7 @@
 			c -= pupilPole;
 
 			o.Albedo = c.rgb;
+			o.Emission = c.rgb/4;
 			// Metallic and smoothness come from slider variables
 			o.Metallic = _Metallic * tex.b;
 			o.Smoothness = _Glossiness ;
