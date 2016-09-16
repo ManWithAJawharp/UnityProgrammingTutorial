@@ -8,13 +8,14 @@ public class LutImageEffect : MonoBehaviour
     private Material effectMaterial;
     private Texture3D lut3D;
     [SerializeField]
-    private Color lutDebug;
+    private bool rebuild = false;
 
     void Start()
     {
         lut3D = make3DLutTexture(lutTexture, 16);
         effectMaterial = new Material(Shader.Find("Hidden/LutImageEffectShader"));
         effectMaterial.SetTexture("_LutTex", lut3D);
+        effectMaterial.SetFloat("_LutSize", 16);
     }
 
     Texture3D make3DLutTexture(Texture2D tex2D, int texsize)
@@ -33,12 +34,18 @@ public class LutImageEffect : MonoBehaviour
 
         tex.SetPixels(pixels);
         tex.Apply();
+        rebuild = false;
         return tex;
     }
 
     public void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        effectMaterial.SetColor("_LutDebug", lutDebug);
+        if (rebuild)
+        {
+            lut3D = make3DLutTexture(lutTexture, 16);
+            effectMaterial.SetTexture("_LutTex", lut3D);
+        }
+            
         Graphics.Blit(source, destination, effectMaterial);
     }
 }

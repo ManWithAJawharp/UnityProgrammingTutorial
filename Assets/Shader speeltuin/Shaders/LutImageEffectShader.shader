@@ -4,7 +4,7 @@
 	{
 		_MainTex("Texture", 2D) = "white" {}
 		_LutTex ("Lut Texture", 3D) = "" {}
-		_LutDebug ("Debug vector 3", Color) = (0,0,0,0)
+		_LutSize ("Dimentions", Float) = 16
 	}
 	SubShader
 	{
@@ -38,30 +38,28 @@
 				o.uv = v.uv;
 				return o;
 			}
-			
-			float3 relativeCords(float3 normCords) 
-			{
-				/*float3 relCords;
-				relCords.x = 0.2 + (0.7 * normCords.x);*/
-				return 0.0325 + (0.9475 * normCords);
-			}
 
 			sampler2D _MainTex;
 			sampler3D _LutTex;
-			float4 _LutDebug;
+			float _LutSize;
+
+			float3 offsetCords(float3 rawColor)
+			{
+				/*
+				Add offset sugested by nvidia article
+				http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter24.html
+				*/
+				half3 lutSize = half3(_LutSize, _LutSize, _LutSize);
+				half3 scale = (lutSize - 1) / lutSize;
+				half3 offset = 1.0 / (2.0 * lutSize);
+				return scale * rawColor + offset;
+			}
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				//fixed4 cor = tex2D(_MainTex, i.uv + half2(0.5,0));
 				fixed4 img = tex2D(_MainTex, i.uv);
-				fixed4 col = tex3D(_LutTex, relativeCords(_LutDebug));//- float3(.2,.2,.2));
-				//fixed4 col = tex3D(_LutTex, (_LutDebug));//- float3(.2,.2,.2));
+				fixed4 col = tex3D(_LutTex, offsetCords(img));
 
-				//fixed4 col = tex3D(_LutTex, img);
-				//col.rgb = img.rgb;
-				col.a = 0;
-				//col.rgb -= cor.rgb;
-				//col.rgb += cor.rgb;
 				return col;
 			}
 			ENDCG
